@@ -1,0 +1,47 @@
+# =========================================================================
+# Two-stage requirements file.
+#
+#   Stage 1 (PyPI-only): handled automatically by `conda env create -f
+#   environment.yml`. Anything reachable from pypi.org goes here.
+#
+#   Stage 2 (GitHub): the three packages at the bottom of this file are
+#   not on PyPI, so they ship as `requirements-github.txt`. Install them
+#   from a terminal that can reach github.com:
+#
+#       conda activate siglip2
+#       pip install -r requirements-github.txt
+#
+# Splitting them lets us install everything that *is* on PyPI even when
+# github.com is unreachable.
+# =========================================================================
+
+# --- JAX with CUDA 12 (uses pip-shipped NVIDIA CUDA libs; no system CUDA needed)
+jax[cuda12]==0.4.33
+jaxlib==0.4.33
+
+# --- Pin used by the official SigLIP 2 Colab
+flax==0.8.5
+
+# --- big_vision runtime deps that live on PyPI
+optax
+ml-collections
+numpy>=1.26
+absl-py
+einops
+distrax
+editdistance
+overrides
+protobuf
+sentencepiece
+psutil
+pycocoevalcap
+
+# --- TensorFlow stack used by big_vision's input pipeline (CPU is enough; JAX does the compute)
+tensorflow-cpu
+tensorflow-text
+tensorflow-gan
+tfds-nightly
+
+# --- Faster gsutil downloads + gsutil itself (used to fetch SigLIP 2 checkpoints)
+crcmod
+gsutil

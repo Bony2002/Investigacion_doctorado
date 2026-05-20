@@ -136,7 +136,6 @@ def inner(j, i, a):
         )
         .line_width(0))
 
-@jax.jit
 def show_affine(aff):
     """
 
@@ -154,7 +153,6 @@ def show_affine(aff):
     # Center and scale the final visualization for the notebook display
     return out.center_xy().scale(0.5)
 
-@jax.jit
 def show_color(color):
     """
     Visualizes a color vector (e.g., RGB) as a vertical strip of squares.

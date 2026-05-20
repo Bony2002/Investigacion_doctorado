@@ -1,0 +1,23 @@
+name: siglip2
+channels:
+  - conda-forge
+dependencies:
+  - python=3.11
+  - pip
+  - git
+  # System libs that play nicer when pulled from conda-forge
+  - libstdcxx-ng
+  - libgcc-ng
+  # Jupyter stack
+  - jupyterlab
+  - ipykernel
+  - ipywidgets
+  - matplotlib
+  - pillow
+  - pip:
+      # NOTE: only the PyPI-reachable packages are listed here. The three
+      # github-only packages live in requirements-github.txt and must be
+      # installed from a terminal that can reach github.com:
+      #     conda activate siglip2
+      #     pip install -r requirements-github.txt
+      - -r requirements.txt
