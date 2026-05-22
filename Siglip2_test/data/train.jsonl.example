@@ -1,0 +1,3 @@
+{"image": "/absolute/path/to/your/image1.jpg", "text": "a line chart of monthly temperature in Madrid"}
+{"image": "/absolute/path/to/your/image2.jpg", "text": "the left bar is taller than the right bar in this comparison"}
+{"image": "relative/under/IMAGE_ROOT/fig3.png", "captions": ["a scatter plot with outliers", "points far from the diagonal trend"]}

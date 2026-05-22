@@ -55,7 +55,11 @@ You should see something like `[CudaDevice(id=0)]`. If you see
 `[CpuDevice(id=0)]` JAX did not find the GPU — check that
 `nvidia-smi` works in the same shell.
 
-## 4. Run the demo
+## 4. Finetune SigLIP2 (text-centric: image + captions)
+
+See **[FINETUNE.md](FINETUNE.md)**. Prepare `data/train.jsonl` with natural-language captions, edit `finetune_config.py`, then run **`finetune_siglip2.ipynb`**. Default: freeze image tower, train text tower.
+
+## 5. Run the demo
 
 Open `set_up.ipynb` in JupyterLab:
 
@@ -66,7 +70,7 @@ jupyter lab
 and pick the **siglip2** kernel. The first cell verifies the environment;
 subsequent cells follow the official Colab.
 
-## Notes
+## 6. Notes
 
 - Checkpoints live at `gs://big_vision/siglip2/`. The `gsutil` CLI from
   `requirements.txt` fetches them (`gsutil cp gs://big_vision/siglip2/<file> /tmp/`).
