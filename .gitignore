@@ -2,3 +2,13 @@
 .env
 .env.*
 !.env.example
+
+# Model checkpoints and large binary files
+*.safetensors
+*.pt
+*.pth
+*.bin
+checkpoint-*/
+wandb/
+workdirs/
+__pycache__/
