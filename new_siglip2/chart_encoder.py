@@ -94,8 +94,7 @@ def build_canvas_metadata(
             original_size=(h_orig, w_orig),
             canvas_size=(h_c, w_c),
             scale_h=h_c / h_orig,
-            scale_w=w_c / w_orig,
-        ))
+            scale_w=w_c / w_orig))
     return metas
 
 
@@ -338,7 +337,7 @@ class ChartEncoderPipeline(nn.Module):
     decoder_dim       : Target dimension of :class:`TokenProjector`.
                         Pass ``None`` (default) to skip projection entirely
                         and return tokens at the full encoder hidden size
-                        (768 for base), which is preferred when the downstream
+                        (1152 for base), which is preferred when the downstream
                         decoder operates at the same dimension.
 
     Input (keyword arguments matching processor output)
@@ -357,7 +356,7 @@ class ChartEncoderPipeline(nn.Module):
     -------
     >>> pipeline = ChartEncoderPipeline(vision_encoder)          # no projection
     >>> tokens, mask = pipeline(**inputs)
-    >>> tokens.shape   # e.g. (2, 256, 768)
+    >>> tokens.shape   # e.g. (2, 256, 1152)
     >>> mask.shape     # e.g. (2, 256)
 
     >>> pipeline = ChartEncoderPipeline(vision_encoder, decoder_dim=256)
@@ -367,33 +366,17 @@ class ChartEncoderPipeline(nn.Module):
 
     def __init__(
         self,
-        vision_encoder: nn.Module,
-        n_unfrozen_blocks: int = 2,
-        n_adapter_layers: int = 2,
-        adapter_reduction: int = 8,
-        decoder_dim: Optional[int] = None,
-    ) -> None:
+        vision_encoder: nn.Module,n_unfrozen_blocks: int = 2,n_adapter_layers: int = 2,adapter_reduction: int = 8,decoder_dim: Optional[int] = None,) -> None:
         super().__init__()
-        self.vision_enc = SigLIP2NaFlexVisionEncoder(
-            vision_encoder, n_unfrozen_blocks=n_unfrozen_blocks
-        )
+        self.vision_enc = SigLIP2NaFlexVisionEncoder(vision_encoder, n_unfrozen_blocks=n_unfrozen_blocks)
+        
         hidden = self.vision_enc.hidden_size
-        self.adapter    = ChartEncoderAdapter(
-            d_model=hidden,
-            n_layers=n_adapter_layers,
-            reduction=adapter_reduction,
-        )
-        self.projector  = (
-            TokenProjector(in_dim=hidden, out_dim=decoder_dim)
-            if decoder_dim is not None else None
-        )
+        
+        self.adapter    = ChartEncoderAdapter(d_model=hidden,n_layers=n_adapter_layers,reduction=adapter_reduction)
+        self.projector  = (TokenProjector(in_dim=hidden, out_dim=decoder_dim)if decoder_dim is not None else None)
 
-    def forward(
-        self,
-        pixel_values: torch.Tensor,
-        pixel_attention_mask: Optional[torch.Tensor] = None,
-        spatial_shapes: Optional[torch.Tensor] = None,
-    ) -> tuple[torch.Tensor, Optional[torch.Tensor]]:
+    def forward(self, pixel_values: torch.Tensor, pixel_attention_mask: Optional[torch.Tensor] = None, spatial_shapes: Optional[torch.Tensor] = None) -> tuple[torch.Tensor, Optional[torch.Tensor]]:
+        
         tokens = self.vision_enc(
             pixel_values=pixel_values,
             pixel_attention_mask=pixel_attention_mask,

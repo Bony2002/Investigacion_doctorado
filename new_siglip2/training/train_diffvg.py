@@ -222,7 +222,8 @@ def save_png(pts_leaf: torch.Tensor, clr_leaf: torch.Tensor,
 # ── main ──────────────────────────────────────────────────────────────────────
 
 def main(args) -> None:
-    OUT_DIR.mkdir(exist_ok=True)
+    out_dir = Path(args.out_dir)
+    out_dir.mkdir(parents=True, exist_ok=True)
 
     RENDER_W = args.render_w
     RENDER_H = round(RENDER_W * ORIG_H / ORIG_W)
@@ -341,11 +342,11 @@ def main(args) -> None:
 
         if step % args.save_every == 0 or step == args.n_iter:
             save_png(last_pts_leaf, last_clr_leaf, RENDER_W, RENDER_H,
-                     OUT_DIR / f"step_{step:04d}.png")
+                     out_dir / f"step_{step:04d}.png")
             torch.save({"encoder_state": enc_pipeline.state_dict(),
                         "decoder_state": decoder.state_dict(),
                         "step": step, "final_loss": loss_render.item()},
-                       OUT_DIR / "ckpt_latest.pt")
+                       out_dir / "ckpt_latest.pt")
 
     # ── final comparison ──────────────────────────────────────────────────
     print("\nSaving final comparison …")
@@ -368,8 +369,8 @@ def main(args) -> None:
         [lbl(target_u8, "Target"),
          sep,
          lbl(pred_u8, f"Prediction  step={args.n_iter}  {RENDER_W}×{RENDER_H}")],
-        axis=1)).save(OUT_DIR / "final_comparison.png")
-    print(f"Done.  Outputs → {OUT_DIR}/")
+        axis=1)).save(out_dir / "final_comparison.png")
+    print(f"Done.  Outputs → {out_dir}/")
 
 
 if __name__ == "__main__":
@@ -384,5 +385,7 @@ if __name__ == "__main__":
     p.add_argument("--reg_weight",  type=float, default=0.0)
     p.add_argument("--save_every",  type=int,   default=50)
     p.add_argument("--log_every",   type=int,   default=10)
+    p.add_argument("--out_dir",     type=str,
+                   default=str(Path(__file__).parent.parent / "outputs" / "diffvg_train_out"))
     args = p.parse_args()
     main(args)

@@ -36,12 +36,12 @@ Architecture
 ------------
 ::
 
-    encoder tokens [B, T, 768]
+    encoder tokens [B, T, 1152]
            │  (keys / values)
     ┌──────▼───────────────────────────────────────────────┐
     │  TinyPrimitiveDecoder                                │
     │                                                      │
-    │  query_embed  Embedding(512, 768)                    │
+    │  query_embed  Embedding(512, 1152)                   │
     │         │                                            │
     │  ┌──────▼──────────────────────────────────────┐     │
     │  │  TransformerDecoderLayer  × n_layers         │     │
@@ -49,9 +49,9 @@ Architecture
     │  │    Cross-Attention (queries ↔ enc tokens)    │     │
     │  │    FFN                                       │     │
     │  └──────────────────────────────────────────────┘     │
-    │         │  [B, 512, 768]                              │
-    │  points_head  Linear(768→18) → Sigmoid               │
-    │  color_head   Linear(768→4)  → Sigmoid               │
+    │         │  [B, 512, 1152]                             │
+    │  points_head  Linear(1152→18) → Sigmoid              │
+    │  color_head   Linear(1152→4)  → Sigmoid              │
     └──────────────────────────────────────────────────────┘
            │
     BezierOutput  points [B,512,9,2]  colors [B,512,4]
@@ -116,7 +116,7 @@ class TinyPrimitiveDecoder(nn.Module):
     Parameters
     ----------
     d_model        : Token dimension – must match the encoder output
-                     (768 for SigLIP2 base with no TokenProjector).
+                     (1152 for SigLIP2 base with no TokenProjector).
     n_queries      : Number of Bézier curves to predict (default 512).
     n_heads        : Attention heads in each decoder layer (default 8).
     n_layers       : Number of TransformerDecoderLayer blocks (default 4).
@@ -142,8 +142,8 @@ class TinyPrimitiveDecoder(nn.Module):
     >>> from chart_decoder import TinyPrimitiveDecoder
     >>> enc = load_vision_encoder()
     >>> pipeline = ChartEncoderPipeline(enc)             # no projector
-    >>> decoder  = TinyPrimitiveDecoder(d_model=768)
-    >>> tokens, mask = pipeline(**processor_inputs)      # [B, T, 768]
+    >>> decoder  = TinyPrimitiveDecoder(d_model=1152)
+    >>> tokens, mask = pipeline(**processor_inputs)      # [B, T, 1152]
     >>> out = decoder(tokens, mask)                      # BezierOutput
     >>> out.points.shape                                 # [B, 512, 9, 2]
     >>> out.colors.shape                                 # [B, 512, 4]
@@ -156,7 +156,7 @@ class TinyPrimitiveDecoder(nn.Module):
 
     def __init__(
         self,
-        d_model: int = 768,
+        d_model: int = 1152,
         n_queries: int = 512,
         n_heads: int = 8,
         n_layers: int = 4,
